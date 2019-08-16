@@ -1,0 +1,8 @@
+A HTMLCollection contains only element nodes (tags) and a NodeList contains all nodes.
+
+There are four node types:
+
+element node
+attribute node
+text node
+comment node
