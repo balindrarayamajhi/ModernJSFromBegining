@@ -1,4 +1,10 @@
-//EVENT BUBLING : event on child going up to parents 
+/*
+    Event bubling is bubling up an event through the DOM.
+    When event happen in particular element in DOM ,it buble up through its parents upto window.
+    
+    Event delegation is almost opposite to event bubling, In delegation ,we put the listner on one of the parent element and put logic inside the event handler to target
+    the element we actaully want.
+ 
 /*
 document.querySelector('.card-title').addEventListener('click',function(){
     console.log('card-title');
