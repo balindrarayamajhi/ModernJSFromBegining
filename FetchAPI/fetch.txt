@@ -1,0 +1,170 @@
+source : https://appdividend.com/2018/08/20/javascript-fetch-api-example-tutorial/
+
+
+Fetch is a new-ish, promise-based API that lets us do Ajax requests without all the fuss associated with XMLHttpRequest. As you’ll see in this post, Fetch is very easy to use and work with and greatly simplifies fetching resources from an API. Plus, it’s now supported in all modern browsers, so using Fetch is really a no-brainer.
+
+A Fetch API provides a fetch() method defined on a window object, which you can use to perform requests and sent it to the server. This method returns a Promise that you can use to retrieve the response of the request.
+
+Generally, we use the GET and POST method to send a network request to the server and retrieve the response and then display that response in the proper format to the User. The fetch() method only has one mandatory argument, which is the URL of the resource you wish to fetch.
+
+#Requests
+    A Request instance represents the requested piece of a fetch() call. By passing the fetch() Request, you can make advanced and customized requests:
+
+    method – GET, POST, PUT, DELETE, HEAD
+    url – URL of the request
+    headers – associated Headers object
+    referrer – referrer of the request
+    mode – cors, no-cors, same-origin
+    credentials – should cookies go with the request? omit, same-origin
+    redirect – follow, error, manual
+    integrity – subresource integrity value
+    cache – cache mode (default, reload, no-cache)
+
+ #GET Requests
+    Straightforwardly, all you do is to call fetch with the URL you want, by default the Fetch API uses the GET method so that a direct call would be like this.
+
+            fetch('https://api.github.com/users/KrunalLathiya')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data) // Prints result from `response.json()` in getRequest
+                })
+                .catch(error => console.error(error))
+
+    Here, we get a response, and the response is Stream object and the response we get is not JSON but a simple Javascript object with a series of methods that we can use further to process our data whichever way we want.
+
+    clone() – This method implies this method creates a clone of the response.
+    json() – This method resolves the promise with JSON.
+    redirect() – This method creates a new response but with a different URL.
+    text() – In this case returns promise resolves with a string.
+    arrayBuffer() – In here we return a promise that resolves with an ArrayBuffer.
+    blob() – This is one determines with a Blob.
+    formData() – Also returns a promise but one that determines with FormData object.
+
+#Loading JSON in Javascript
+    Let us see how we can extract the JSON data from that response once the request completes:
+
+            fetch('https://api.github.com/users/KrunalLathiya')
+            .then(res => res.json())
+            .then(json => console.log(json));
+
+    So here when the HTTP request ends, we get a promise with a data, and then we resolve that promise with JSON. First,we start the request by calling fetch(), and when the promise is fulfilled, it returns a Response object, which exposes a json method.
+
+    However, the json() method also returns a promise, which means we need to chain on another then(), before the JSON response is logged to the console.
+
+#Response Metadata
+    In the above example, we have seen the status of a Response object and how to parse a response as JSON. We can access other metadata like headers. So see the following code.
+
+    fetch('users.json').then(function(response) {
+        console.log(response.headers.get('Content-Type'));
+        console.log(response.headers.get('Date'));
+
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.type);
+        console.log(response.url);
+    });
+
+
+#Response Types
+    When we make a fetch request, the response will be given the response.type of “basic“, “cors” or “opaque“. These types show where a resource has come from and can be used to inform how we should treat a response object.
+
+    When the request is made for the resource on the same origin, the response will have the basic type and there aren’t any restrictions on what you can view from the response.
+
+    If the request is made for the resource on another origin which returns CORs headers, then the type is cors. The CORS and the basic responses are almost identical except that a cors response restricts the headers you can view to `Cache-Control`, `Content-Language`, `Content-Type`, `Expires`, `Last-Modified`, and `Pragma`.
+
+    An opaque response is for a request made for a resource on a different origin that doesn’t return CORS headers. With an opaque response we won’t be able to read the data returned or view the status of the request, meaning we can’t check if the request was successful or not.
+
+    You can define a mode for a fetch request such that only certain requests will resolve. The modes you can set are as follows:
+
+        1.A same-origin only succeeds for the requests for assets on the same origin, all the other requests will reject.
+
+        2.The CORS will allow the requests for assets on     the same-origin and other origins which return     an appropriate CORS headers.
+        3.The cors-with-forced-preflight will always          perform a preflight check before making an         actual request.
+        4.The no-cors is intended to make the requests to     other origins that do not have the CORS headers    and result in an opaque, but as stated, this       isn’t possible in the window global scope at        the moment.
+
+    If we want to define the mode, add the options object as a second parameter in the fetch request and define a mode in that object.
+
+        fetch('https://facebook.com/cors-enabled/                some.json', {mode: 'cors'})
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(text) {
+                console.log('Request successful', text);
+            })
+            .catch(function(error) {
+                log('Request failed', error)
+            });
+
+#Request Headers
+
+        fetch('https://api.github.com/users/KrunalLathiya', {
+        headers: new Headers({
+            'User-agent': 'Mozilla/4.0 Custom User Agent'
+        })
+        })
+        .then(response => response.json())
+        .then(data => {
+        console.log(data)
+        })
+        .catch(error => console.error(error))
+
+        The ability to set request headers is essential to request flexibility. You can work with request headers by executing new Headers():
+
+            // Create an empty Headers instance
+            let headers = new Headers();
+
+            // Add a few headers
+            headers.append('Content-Type', 'text/plain');
+            headers.append('X-My-Custom-Header', 'CustomValue');
+
+            // Check, get, and set header values
+            headers.has('Content-Type'); // true
+            headers.get('Content-Type'); // "text/plain"
+            headers.set('Content-Type', 'application/json');
+
+            // Delete a header
+            headers.delete('X-My-Custom-Header');
+
+            // Add initial values
+            let headers = new Headers({
+                'Content-Type': 'text/plain',
+                'X-My-Custom-Header': 'CustomValue'
+            });
+
+
+    You can use the append the has, get, set, and delete methods to modify request headers.
+
+#Advanced: CORS example
+    CORS is primarily checked at the server to make sure your configuration is correct on the server-side.
+
+    The credentials option controls if your cookies are automatically included.
+
+        fetch('https://api.github.com/users/KrunalLathiya',     {
+                credentials: 'include', 
+                /* 
+                    Useful for including session ID (and, IIRC, authorization headers) 
+                */
+            })
+            .then(response => response.json())
+            .then(data => {
+            console.log(data) // Prints result from `response.json()`
+            })
+            .catch(error => console.error(error));    
+
+
+#Post Requests
+    postRequest('https://appdividend.com/api/v1/users',         {user: 'Krunal'})
+        .then(data => console.log(data)) // Result from         //the `response.json()` call
+        .catch(error => console.error(error))
+
+    function postRequest(url, data) {
+         return fetch(url, {
+            credentials: 'same-origin', // 'include', default: 'omit'
+            method: 'POST', // 'GET', 'PUT', 'DELETE', etc.
+            body: JSON.stringify(data), // Coordinate the              //body  type with 'Content-Type'
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+  });
+  .then(response => response.json())
+}

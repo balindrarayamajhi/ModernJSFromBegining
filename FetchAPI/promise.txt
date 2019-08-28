@@ -1,0 +1,112 @@
+Promise 
+A promise in an object
+Instead passing a callback to function , ask function for a promise.
+Once I have promise I can do things over it 
+
+Few more discussion 
+
+1. A “producing code” that does something and takes time.
+2. A “consuming code” that wants the result of the “producing code” once it’s ready.
+3. A promise is a special JavaScript object that links the “producing code” and the “consuming code” together. The         “producing code” takes whatever time it needs to produce the promised result, and the “promise” makes that result       available to all of the subscribed code when it’s ready.
+
+The constructor syntax for a promise object is:
+
+            let promise = new Promise(function(resolve, reject) {
+                    //executor (the producing code);
+            });
+
+      The function passed to new Promise is called the executor. When the promise is created, it runs automatically. It contains the producing code, that should eventually produce a result. Its arguments resolve and reject are callbacks provided by JavaScript itself. Our code is only inside executor.
+
+
+        When the executor obtains the result, be it soon or late – doesn’t matter, it should call one of these callbacks:
+
+        resolve(value) — if the job finished successfully, with result value.
+        reject(error) — if an error occurred, error is the error object.
+
+
+        So to summarize: the executor runs automatically, it should do a job and then call either resolve or reject.
+
+        The promise object returned by new Promise constructor has internal properties:
+
+        state — initially "pending", then changes to either "fulfilled" when resolve is called or "rejected" when reject is called.
+        result — initially undefined, then changes to value when resolve(value) called or error when reject(error) is called.
+        So the executor moves promise to one of these states:
+
+
+
+Consumers: then, catch, finally
+    A Promise object serves as a link between the executor (the “producing code” or “singer”) and the consuming functions (the “fans”), which will receive the result or error. Consuming functions can be registered (subscribed) using methods .then, .catch and .finally.
+
+then
+The most important, fundamental one is .then.
+
+    The syntax is:
+
+            promise.then(
+            function(result) { /* handle a successful result */ },
+            function(error) { /* handle an error */ }
+            );
+
+    The first argument of .then is a function that runs when the promise is resolved, and receives the result.
+    The second argument of .then is a function that runs when the promise is rejected, and receives the error.
+
+For instance, here’s a reaction to a successfully resolved promise:
+
+
+catch
+    If we’re interested only in errors, then we can use null as the first argument: .then(null, errorHandlingFunction). Or we can use .catch(errorHandlingFunction), which is exactly the same
+
+    .catch(f) is the same as promise.then(null, f)
+    promise.catch(alert); 
+    The call .catch(f) is a complete analog of .then(null, f), it’s just a shorthand.
+
+then/catch 
+   we can combine then catch in same promise object , argument in then is executed when promise is resolved and argument in catch is executed when promise is rejected.   
+
+   The syntax is:
+
+            promise.then(
+            function(result))      // handles a  successful result 
+            .cactch(
+            function(error));       // handles an error 
+            
+
+
+finally
+    Just like there’s a finally clause in a regular try {...} catch {...}, there’s finally in promises.
+
+    The call .finally(f) is similar to .then(f, f) in the sense that f always runs when the promise is settled: be it resolve or reject. finally is a good handler for performing cleanup, e.g. stopping our loading indicators, as they are not needed anymore, no matter what the outcome is.
+
+    Like this:
+            new Promise((resolve, reject) => {
+            /* do something that takes time, and then call resolve/reject */
+            })
+            // runs when the promise is settled, doesn't matter successfully or not
+            .finally(() => stop loading indicator)
+            .then(result => show result, err => show error)
+    It’s not exactly an alias of then(f,f) though. There are several important differences:
+
+    A finally handler has no arguments. In finally we don’t know whether the promise is successful or not. That’s all right, as our task is usually to perform “general” finalizing procedures.A finally handler passes through results and errors to the next handler.
+
+    For instance, here the result is passed through finally to then:
+
+    new Promise((resolve, reject) => {
+    setTimeout(() => resolve("result"), 2000)
+    })
+    .finally(() => alert("Promise ready"))
+    .then(result => alert(result)); // <-- .then handles the result
+    And here there’s an error in the promise, passed through finally to catch:
+
+    new Promise((resolve, reject) => {
+    throw new Error("error");
+    })
+    .finally(() => alert("Promise ready"))
+    .catch(err => alert(err));  // <-- .catch handles the error object
+    That’s very convenient, because finally is not meant to process a promise result. So it passes it through.
+
+
+
+On settled promises handlers runs immediately
+
+    If a promise is pending, .then/catch/finally handlers wait for it. Otherwise, if a promise has already settled, they execute immediately:
+
