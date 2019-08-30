@@ -1,0 +1,7 @@
+What is Pattern?
+
+    -A reusble solution that can be applied to occuring problems in software design.
+    -can also be thought of as programming templates and a speicfic way to write a code 
+    -sitaution vary significantly
+    -can be apllied for whole application or specific section of code.
+
